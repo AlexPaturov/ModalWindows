@@ -1,0 +1,84 @@
+﻿@model ReportFilterViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+@* --- СКРЫТЫЕ ПОЛЯ ДЛЯ ПЕРЕДАЧИ СООБЩЕНИЙ В JAVASCRIPT --- *@
+@if (ViewData["ModalSuccessMessage"] != null)
+{
+    <input type="hidden" id="modalSuccessMessage" value="@ViewData["ModalSuccessMessage"]" />
+}
+@if (ViewData["ModalErrorMessage"] != null)
+{
+    <input type="hidden" id="modalErrorMessage" value="@ViewData["ModalErrorMessage"]" />
+}
+@if (ViewData["ModalWarningMessage"] != null)
+{
+    <input type="hidden" id="modalWarningMessage" value="@ViewData["ModalWarningMessage"]" />
+}
+@* ======================================================== *@
+
+
+
+<div class="text-center">
+    <h1 class="display-4">Фильтр отчета</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form asp-action="Index" method="post">
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    @* --- Поля для выбора дат --- *@
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="@Html.IdFor(m => m.StartDate)" class="form-label">@Html.DisplayNameFor(m => m.StartDate)</label>
+                            <input asp-for="StartDate" type="date" class="form-control" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EndDate" class="form-label"></label>
+                            <input asp-for="EndDate" type="date" class="form-control" />
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @* --- ВЫПАДАЮЩИЙ СПИСОК ДЛЯ ВЫБОРА ВЕСОВ --- *@
+                    <div class="mb-3">
+                        <label asp-for="SelectedWeigherId" class="form-label"></label>
+                        <select asp-for="SelectedWeigherId" asp-items="Model.AvailableWeighers" class="form-select">
+                            <option value="">-- Выберите весы --</option>
+                        </select>
+                        <span asp-validation-for="SelectedWeigherId" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-primary">Сформировать</button>
+                </div>
+            </div>
+        </form>
+
+        <hr class="my-4" />
+
+        @* --- СЕКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ РЕЗУЛЬТАТОВ --- *@
+        <div id="report-results">
+            @if (ViewData["ReportData"] is List<string> reportData && reportData.Any())
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Результаты отчета</h4>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var line in reportData)
+                        {
+                            <li class="list-group-item">@line</li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
