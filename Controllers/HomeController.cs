@@ -52,7 +52,7 @@ namespace ModalWindows.Controllers
             {
                 try
                 {
-                    var reportData = await _reportService.GetReportDataAsync(...);
+                    var reportData = await _reportService.GetReportDataAsync(model.StartDate, model.EndDate, model.SelectedWeigherId);
                     if (reportData.Any())
                     {
                         ViewData["ModalMessage"] = "Отчет успешно сформирован!";

@@ -1,49 +1,36 @@
 ﻿@using ModalWindows.Enums
 @using ModalWindows.Services
 @inject ModalService modalService
-@implements IDisposable
 
 @if (IsVisible)
 {
-    <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog" @onclick="Close">
-        <div class="modal-dialog modal-dialog-centered" @onclick:stopPropagation="true">
+    <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog" onclick="@Close">
+        <div class="modal-dialog modal-dialog-centered" onclick:stopPropagation="true">
             <div class="modal-content border-0 shadow">
                 <div class="modal-body text-center p-4">
-
-                    @* --- Динамическая иконка и заголовок --- *@
                     <div class="mb-3">
                         <i class="@IconCssClass" style="font-size: 3rem;"></i>
                     </div>
                     <h5 class="modal-title mb-2">@Title</h5>
-
-                    @* --- Сообщение --- *@
                     <p class="text-muted">@Message</p>
-
-                    @* --- Кнопка --- *@
-                    <button type="button" class="btn @ButtonCssClass mt-3" onclick="Close">@ButtonText</button>
-
+                    <button type="button" class="btn @ButtonCssClass mt-3" onclick="@Close">@ButtonText</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="modal-backdrop fade show"></div>
-
-    @* Добавляем фон-затемнение *@
-    <div class="modal-backdrop fade show"></div>
 }
 
 @code {
-    [Parameter] public string Message { get; set; } = string.Empty;
-    [Parameter] public EventCallback OnClose { get; set; }
-
     [Parameter] public string? MessageToShow { get; set; }
     [Parameter] public string? TypeString { get; set; }
 
     private bool IsVisible { get; set; }
-    private string Title { get; set; } = string.Empty;
-    private string IconCssClass { get; set; } = string.Empty;
-    private string ButtonCssClass { get; set; } = "btn-secondary";
-    private string ButtonText { get; set; } = "Закрыть";
+    private string Title { get; set; } = "";
+    private string Message { get; set; } = "";
+    private string IconCssClass { get; set; } = "";
+    private string ButtonCssClass { get; set; } = "";
+    private string ButtonText { get; set; } = "";
 
     protected override void OnParametersSet()
     {
@@ -51,64 +38,39 @@
         {
             if (Enum.TryParse<NotificationType>(TypeString, true, out var type))
             {
-                // Показываем окно
-                Message = MessageToShow;
                 IsVisible = true;
+                Message = MessageToShow;
 
                 switch (type)
                 {
                     case NotificationType.Success:
                         Title = "Успешно!";
-                        // ...
+                        IconCssClass = "bi bi-check-circle-fill text-success";
+                        ButtonCssClass = "btn-primary";
+                        ButtonText = "OK";
                         break;
-                        // ... другие case ...
+                    case NotificationType.Error:
+                        Title = "Ошибка!";
+                        IconCssClass = "bi bi-x-circle-fill text-danger";
+                        ButtonCssClass = "btn-secondary";
+                        ButtonText = "Закрыть";
+                        break;
+                    case NotificationType.Warning:
+                        Title = "Внимание";
+                        IconCssClass = "bi bi-info-circle-fill text-warning";
+                        ButtonCssClass = "btn-secondary";
+                        ButtonText = "OK";
+                        break;
                 }
             }
         }
     }
 
-    // Публичный метод для показа окна
-    public void ShowModal(string message, NotificationType type = NotificationType.Success)
-    {
-        Message = message;
-        IsVisible = true;
-
-        switch (type)
-        {
-            case NotificationType.Success:
-                Title = "Успешно!";
-                IconCssClass = "bi bi-check-circle-fill text-success";
-                ButtonCssClass = "btn-primary";
-                ButtonText = "OK";
-                break;
-            case NotificationType.Error:
-                Title = "Ошибка!";
-                IconCssClass = "bi bi-x-circle-fill text-danger";
-                ButtonCssClass = "btn-secondary";
-                ButtonText = "Закрыть";
-                break;
-            case NotificationType.Warning:
-                Title = "Внимание";
-                IconCssClass = "bi bi-info-circle-fill text-warning";
-                ButtonCssClass = "btn-secondary";
-                ButtonText = "OK";
-                break;
-        }
-
-        StateHasChanged();
-    }
- 
-    // Метод для закрытия окна
-    private async Task Close()
+    private void Close()
     {
         IsVisible = false;
-        await OnClose.InvokeAsync(); // Уведомляем родителя, что окно закрылось
+        MessageToShow = null;
+        TypeString = null;
         StateHasChanged();
     }
-
-    public void Dispose()
-    {
-        modalService.OnShow -= ShowModal;
-    }
-
 }
