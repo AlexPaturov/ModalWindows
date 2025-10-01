@@ -31,7 +31,7 @@ public class Program
         app.UseRouting();
 
         app.UseAuthorization();
-
+        app.MapBlazorHub();
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");

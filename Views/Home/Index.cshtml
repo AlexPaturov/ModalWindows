@@ -7,7 +7,7 @@
     var modalTypeStr = ViewData["ModalType"] as string;
 }
 @* Рендерим компонент и ПЕРЕДАЕМ ему параметры *@
-<component type="typeof(NotificationModal)" render-mode="ServerPrerendered"
+<component type="typeof(NotificationModal)" render-mode="Server"
            param-InitialMessage="@modalMessage"
            param-InitialTypeString="@modalTypeStr" />
 

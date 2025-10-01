@@ -3,7 +3,6 @@ using ModalWindows.Enums;
 using ModalWindows.Models;
 using ModalWindows.Services;
 using System.Diagnostics;
-using static ModalWindows.Views.Shared.CustomComponents.NotificationModal;
 
 namespace ModalWindows.Controllers
 {
