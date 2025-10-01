@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ModalWindows.Models;
 using ModalWindows.Services;
 using System.Diagnostics;
+using static ModalWindows.Views.Shared.CustomComponents.NotificationModal;
 
 namespace ModalWindows.Controllers
 {
@@ -9,11 +10,16 @@ namespace ModalWindows.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IReportService _reportService;
+        private readonly ModalService _modalService;
 
-        public HomeController(ILogger<HomeController> logger, IReportService reportService)
+        public HomeController(
+            ILogger<HomeController> logger, 
+            IReportService reportService,
+            ModalService modalService)
         {
             _logger = logger;
             _reportService = reportService;
+            _modalService = modalService;
         }
 
         // in use
@@ -40,27 +46,31 @@ namespace ModalWindows.Controllers
                     {
                         // === СЦЕНАРИЙ 1: ДАННЫЕ УСПЕШНО ПОЛУЧЕНЫ ===
                         // УСПЕХ: Передаем сообщение для модального окна
-                        ViewData["ModalSuccessMessage"] = "Отчет успешно сформирован!";
+                        // ViewData["ModalSuccessMessage"] = "Отчет успешно сформирован!";
+                        _modalService.Show("Отчет успешно сформирован!", NotificationType.Success);
                         ViewData["ReportData"] = reportData;
                     }
                     else
                     {
                         // === СЦЕНАРИЙ 2: ДАННЫЕ НЕ НАЙДЕНЫ ===
                         // НЕТ ДАННЫХ: Передаем сообщение для модального окна
-                        ViewData["ModalWarningMessage"] = "По вашему запросу данные не найдены.";
+                        // ViewData["ModalWarningMessage"] = "По вашему запросу данные не найдены.";
+                        _modalService.Show("По вашему запросу данные не найдены.", NotificationType.Warning);
                     }
                 }
                 catch (Exception ex)
                 {
                     // === СЦЕНАРИЙ 3: ПРОИЗОШЛА ОШИБКА ===
                     _logger.LogError(ex, "Ошибка при формировании отчета");
-                    ViewData["ModalErrorMessage"] = $"Произошла ошибка: {ex.Message}";
+                    // ViewData["ModalErrorMessage"] = $"Произошла ошибка: {ex.Message}";
+                    _modalService.Show($"Произошла ошибка: {ex.Message}", NotificationType.Error);
                 }
             }
             else 
             {
                 // Ошибка валидации модели - тоже можно показать в модальном окне
-                ViewData["ModalErrorMessage"] = "Пожалуйста, исправьте ошибки в форме.";
+                // ViewData["ModalErrorMessage"] = "Пожалуйста, исправьте ошибки в форме.";
+                _modalService.Show("Пожалуйста, исправьте ошибки в форме.", NotificationType.Error);
             }
                 // В любом случае возвращаем то же представление, чтобы пользователь мог видеть результат
                 return View(model);

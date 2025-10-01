@@ -1,9 +1,12 @@
-﻿@model ReportFilterViewModel
+﻿@using ModalWindows.Views.Shared.CustomComponents
+@model ReportFilterViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
+<component type="typeof(NotificationModal)" render-mode="ServerPrerendered" />
+
 @* --- СКРЫТЫЕ ПОЛЯ ДЛЯ ПЕРЕДАЧИ СООБЩЕНИЙ В JAVASCRIPT --- *@
-@if (ViewData["ModalSuccessMessage"] != null)
+@* @if (ViewData["ModalSuccessMessage"] != null)
 {
     <input type="hidden" id="modalSuccessMessage" value="@ViewData["ModalSuccessMessage"]" />
 }
@@ -14,7 +17,7 @@
 @if (ViewData["ModalWarningMessage"] != null)
 {
     <input type="hidden" id="modalWarningMessage" value="@ViewData["ModalWarningMessage"]" />
-}
+} *@
 @* ======================================================== *@
 
 

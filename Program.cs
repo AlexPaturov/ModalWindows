@@ -9,7 +9,14 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllersWithViews();
+
+        // 2. Добавляем сервисы для Blazor Server
+        builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor();
+
         builder.Services.AddScoped<IReportService, FakeReportService>();
+        builder.Services.AddSingleton<ModalService>();
+
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())
