@@ -21,6 +21,15 @@ namespace ModalWindows.Controllers
         public IActionResult Index()
         {
             var model = new ReportFilterViewModel();
+
+            // --- ШАГ 2.1: Читаем данные из TempData после редиректа ---
+            if (TempData["ReportDataJson"] is string json)
+            {
+                // Десериализуем JSON и кладем в ViewData для отображения
+                ViewData["ReportData"] = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+            }
+
+            // Сообщения об успехе/ошибке остаются в TempData, View их прочитает напрямую.
             return View(model);
         }
 
@@ -40,8 +49,9 @@ namespace ModalWindows.Controllers
                     {
                         // Используем TempData
                         TempData["NotificationType"] = "success";
-                        TempData["NotificationMessage"] = "Отчет успешно сформирован!";
-                        ViewData["ReportData"] = reportData;
+                        //TempData["NotificationMessage"] = "Отчет успешно сформирован!";
+                        // Сериализуем данные отчета в JSON-строку для передачи через TempData
+                        TempData["ReportDataJson"] = System.Text.Json.JsonSerializer.Serialize(reportData);
                     }
                     else
                     {
@@ -62,7 +72,7 @@ namespace ModalWindows.Controllers
             }
 
             // В любом случае возвращаем то же представление, чтобы пользователь мог видеть результат
-            return View(model);
+            return RedirectToAction(nameof(Index));
         }
 
         // unused
