@@ -5,23 +5,6 @@
 }
 <component type="typeof(NotificationModal)" render-mode="ServerPrerendered" />
 
-@* --- СКРЫТЫЕ ПОЛЯ ДЛЯ ПЕРЕДАЧИ СООБЩЕНИЙ В JAVASCRIPT --- *@
-@* @if (ViewData["ModalSuccessMessage"] != null)
-{
-    <input type="hidden" id="modalSuccessMessage" value="@ViewData["ModalSuccessMessage"]" />
-}
-@if (ViewData["ModalErrorMessage"] != null)
-{
-    <input type="hidden" id="modalErrorMessage" value="@ViewData["ModalErrorMessage"]" />
-}
-@if (ViewData["ModalWarningMessage"] != null)
-{
-    <input type="hidden" id="modalWarningMessage" value="@ViewData["ModalWarningMessage"]" />
-} *@
-@* ======================================================== *@
-
-
-
 <div class="text-center">
     <h1 class="display-4">Фильтр отчета</h1>
 </div>

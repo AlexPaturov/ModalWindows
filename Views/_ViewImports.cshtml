@@ -1,18 +1,6 @@
-﻿// --- Стандартные using'и для MVC ---
-@using ModalWindows
+﻿@using ModalWindows
 @using ModalWindows.Models
-
-// === ДОПОЛНЕНИЕ 2: Using для Blazor-компонентов ===
-// Это КЛЮЧЕВАЯ строка, чтобы MVC "увидел" ваш NotificationModal.razor.
-// Убедитесь, что пространство имен правильное (ИмяПроекта.Папка, где лежат компоненты)
 @using ModalWindows.Views.Shared
 @using ModalWindows.Views.Shared.CustomComponents
-
-// --- Стандартный Tag Helper для MVC ---
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-// === ДОПОЛНЕНИЕ 3: Tag Helper для Blazor-компонентов ===
-// Эта строка нужна, чтобы вы могли использовать <component>
-    в .cshtml файлах.
-    // Замените "ModalWindows" на точное имя вашей сборки (проекта).
 @addTagHelper *, ModalWindows

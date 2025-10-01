@@ -1,11 +1,12 @@
-﻿@using ModalWindows.Services
+﻿@using ModalWindows.Enums
+@using ModalWindows.Services
 @inject ModalService modalService
 @implements IDisposable
 
 @if (IsVisible)
 {
-    <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog" @onclick="Close">
+        <div class="modal-dialog modal-dialog-centered" @onclick:stopPropagation="true">
             <div class="modal-content border-0 shadow">
                 <div class="modal-body text-center p-4">
 
@@ -26,6 +27,9 @@
         </div>
     </div>
     <div class="modal-backdrop fade show"></div>
+
+    @* Добавляем фон-затемнение *@
+    <div class="modal-backdrop fade show"></div>
 }
 
 @code {
@@ -37,12 +41,19 @@
     private string IconCssClass { get; set; } = string.Empty;
     private string ButtonCssClass { get; set; } = "btn-secondary";
     private string ButtonText { get; set; } = "Закрыть";
-    public enum NotificationType { Success, Error, Warning } // Тип уведомления
 
-    protected override void OnInitialized()
+    protected  override void OnAfterRender(bool firstRender)
     {
-        // Подписываемся на событие
-        modalService.OnShow += ShowModal;
+        // Мы действуем только при первом "живом" рендере,
+        // когда WebSocket уже установлен.
+        if (firstRender)
+        {
+            if (modalService.PendingMessage != null && modalService.PendingType.HasValue)
+            {
+                ShowModal(modalService.PendingMessage, modalService.PendingType.Value);
+                modalService.ClearPending();
+            }
+        }
     }
 
     // Публичный метод для показа окна
