@@ -4,5 +4,6 @@ public enum NotificationType
 {
     Success,
     Error,
-    Warning
+    Warning,
+    Danger
 }

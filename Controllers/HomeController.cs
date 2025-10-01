@@ -28,6 +28,20 @@ namespace ModalWindows.Controllers
         public IActionResult Index()
         {
             var model = new ReportFilterViewModel();
+
+            // Проверяем, есть ли данные отчета после редиректа
+            if (TempData["ReportDataJson"] is string json)
+            {
+                ViewData["ReportData"] = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+            }
+
+            // Проверяем, есть ли уведомление для модального окна
+            if (TempData["NotificationMessage"] != null && TempData["NotificationType"] != null)
+            {
+                ViewData["ModalMessage"] = TempData["NotificationMessage"];
+                ViewData["ModalType"] = TempData["NotificationType"];
+            }
+
             return View(model);
         }
 
@@ -39,42 +53,30 @@ namespace ModalWindows.Controllers
             {
                 try
                 {
-                    // 1. Имитируем запрос в "базу данных"
                     var reportData = await _reportService.GetReportDataAsync(model.StartDate, model.EndDate, model.SelectedWeigherId);
 
-                    // 2. Обрабатываем результат
                     if (reportData.Any())
                     {
-                        // === СЦЕНАРИЙ 1: ДАННЫЕ УСПЕШНО ПОЛУЧЕНЫ ===
-                        // УСПЕХ: Передаем сообщение для модального окна
-                        // ViewData["ModalSuccessMessage"] = "Отчет успешно сформирован!";
-                        _modalService.Show("Отчет успешно сформирован!", NotificationType.Success);
-                        ViewData["ReportData"] = reportData;
+                        TempData["NotificationType"] = NotificationType.Success.ToString();
+                        TempData["NotificationMessage"] = "Отчет успешно сформирован!";
+                        // Сохраняем данные отчета тоже в TempData, чтобы они были доступны после редиректа
+                        TempData["ReportDataJson"] = System.Text.Json.JsonSerializer.Serialize(reportData);
                     }
                     else
                     {
-                        // === СЦЕНАРИЙ 2: ДАННЫЕ НЕ НАЙДЕНЫ ===
-                        // НЕТ ДАННЫХ: Передаем сообщение для модального окна
-                        // ViewData["ModalWarningMessage"] = "По вашему запросу данные не найдены.";
-                        _modalService.Show("По вашему запросу данные не найдены.", NotificationType.Warning);
+                        TempData["NotificationType"] = NotificationType.Warning.ToString();
+                        TempData["NotificationMessage"] = "По вашему запросу данные не найдены.";
                     }
                 }
                 catch (Exception ex)
                 {
-                    // === СЦЕНАРИЙ 3: ПРОИЗОШЛА ОШИБКА ===
-                    _logger.LogError(ex, "Ошибка при формировании отчета");
-                    // ViewData["ModalErrorMessage"] = $"Произошла ошибка: {ex.Message}";
-                    _modalService.Show($"Произошла ошибка: {ex.Message}", NotificationType.Error);
+                    TempData["NotificationType"] = NotificationType.Danger.ToString(); // Используем 'danger' для bootstrap
+                    TempData["NotificationMessage"] = $"Произошла ошибка: {ex.Message}";
                 }
             }
-            else 
-            {
-                // Ошибка валидации модели - тоже можно показать в модальном окне
-                // ViewData["ModalErrorMessage"] = "Пожалуйста, исправьте ошибки в форме.";
-                _modalService.Show("Пожалуйста, исправьте ошибки в форме.", NotificationType.Error);
-            }
-                // В любом случае возвращаем то же представление, чтобы пользователь мог видеть результат
-                return View(model);
+
+            // ВАЖНО: Делаем редирект на GET-метод Index
+            return RedirectToAction(nameof(Index));
         }
 
         // unused

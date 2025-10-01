@@ -2,8 +2,14 @@
 @model ReportFilterViewModel
 @{
     ViewData["Title"] = "Home Page";
+    // Получаем параметры для модального окна
+    var modalMessage = ViewData["ModalMessage"] as string;
+    var modalTypeStr = ViewData["ModalType"] as string;
 }
-<component type="typeof(NotificationModal)" render-mode="ServerPrerendered" />
+@* Рендерим компонент и ПЕРЕДАЕМ ему параметры *@
+<component type="typeof(NotificationModal)" render-mode="ServerPrerendered"
+           param-InitialMessage="@modalMessage"
+           param-InitialTypeString="@modalTypeStr" />
 
 <div class="text-center">
     <h1 class="display-4">Фильтр отчета</h1>

@@ -36,22 +36,24 @@
     [Parameter] public string Message { get; set; } = string.Empty;
     [Parameter] public EventCallback OnClose { get; set; }
 
+    // НОВЫЕ ПАРАМЕТРЫ для получения начального состояния
+    [Parameter] public string? InitialMessage { get; set; }
+    [Parameter] public string? InitialTypeString { get; set; }
+
     private bool IsVisible { get; set; }
     private string Title { get; set; } = string.Empty;
     private string IconCssClass { get; set; } = string.Empty;
     private string ButtonCssClass { get; set; } = "btn-secondary";
     private string ButtonText { get; set; } = "Закрыть";
 
-    protected  override void OnAfterRender(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
-        // Мы действуем только при первом "живом" рендере,
-        // когда WebSocket уже установлен.
-        if (firstRender)
+        if (firstRender && !string.IsNullOrEmpty(InitialMessage) && !string.IsNullOrEmpty(InitialTypeString))
         {
-            if (modalService.PendingMessage != null && modalService.PendingType.HasValue)
+            // Пытаемся преобразовать строку типа в enum
+            if (Enum.TryParse<NotificationType>(InitialTypeString, true, out var type))
             {
-                ShowModal(modalService.PendingMessage, modalService.PendingType.Value);
-                modalService.ClearPending();
+                ShowModal(InitialMessage, type);
             }
         }
     }
