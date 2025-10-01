@@ -2,22 +2,6 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-@* --- СКРЫТЫЕ ПОЛЯ ДЛЯ ПЕРЕДАЧИ СООБЩЕНИЙ В JAVASCRIPT --- *@
-@if (ViewData["ModalSuccessMessage"] != null)
-{
-    <input type="hidden" id="modalSuccessMessage" value="@ViewData["ModalSuccessMessage"]" />
-}
-@if (ViewData["ModalErrorMessage"] != null)
-{
-    <input type="hidden" id="modalErrorMessage" value="@ViewData["ModalErrorMessage"]" />
-}
-@if (ViewData["ModalWarningMessage"] != null)
-{
-    <input type="hidden" id="modalWarningMessage" value="@ViewData["ModalWarningMessage"]" />
-}
-@* ======================================================== *@
-
-
 
 <div class="text-center">
     <h1 class="display-4">Фильтр отчета</h1>
@@ -59,6 +43,18 @@
                 </div>
             </div>
         </form>
+
+        @* --- ВОТ БЛОК ДЛЯ УВЕДОМЛЕНИЙ (ОБЛАСТЬ 1) --- *@
+        <div class="mt-4">
+            @* mt-4 - отступ сверху *@
+            @if (TempData["NotificationMessage"] != null)
+            {
+                <div class="alert alert-@TempData["NotificationType"]" role="alert">
+                    @TempData["NotificationMessage"]
+                </div>
+            }
+        </div>
+        @* ============================================= *@
 
         <hr class="my-4" />
 

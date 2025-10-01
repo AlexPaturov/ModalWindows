@@ -38,32 +38,31 @@ namespace ModalWindows.Controllers
                     // 2. Обрабатываем результат
                     if (reportData.Any())
                     {
-                        // === СЦЕНАРИЙ 1: ДАННЫЕ УСПЕШНО ПОЛУЧЕНЫ ===
-                        // УСПЕХ: Передаем сообщение для модального окна
-                        ViewData["ModalSuccessMessage"] = "Отчет успешно сформирован!";
+                        // Используем TempData
+                        TempData["NotificationType"] = "success";
+                        TempData["NotificationMessage"] = "Отчет успешно сформирован!";
                         ViewData["ReportData"] = reportData;
                     }
                     else
                     {
-                        // === СЦЕНАРИЙ 2: ДАННЫЕ НЕ НАЙДЕНЫ ===
-                        // НЕТ ДАННЫХ: Передаем сообщение для модального окна
-                        ViewData["ModalWarningMessage"] = "По вашему запросу данные не найдены.";
+                        TempData["NotificationType"] = "warning";
+                        TempData["NotificationMessage"] = "По вашему запросу данные не найдены.";
                     }
                 }
                 catch (Exception ex)
                 {
-                    // === СЦЕНАРИЙ 3: ПРОИЗОШЛА ОШИБКА ===
-                    _logger.LogError(ex, "Ошибка при формировании отчета");
-                    ViewData["ModalErrorMessage"] = $"Произошла ошибка: {ex.Message}";
+                    TempData["NotificationType"] = "danger";
+                    TempData["NotificationMessage"] = $"Произошла ошибка: {ex.Message}";
                 }
             }
-            else 
+            else
             {
                 // Ошибка валидации модели - тоже можно показать в модальном окне
-                ViewData["ModalErrorMessage"] = "Пожалуйста, исправьте ошибки в форме.";
+                TempData["ModalErrorMessage"] = "Пожалуйста, исправьте ошибки в форме.";
             }
-                // В любом случае возвращаем то же представление, чтобы пользователь мог видеть результат
-                return View(model);
+
+            // В любом случае возвращаем то же представление, чтобы пользователь мог видеть результат
+            return View(model);
         }
 
         // unused
