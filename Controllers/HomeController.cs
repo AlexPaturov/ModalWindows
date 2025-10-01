@@ -52,30 +52,28 @@ namespace ModalWindows.Controllers
             {
                 try
                 {
-                    var reportData = await _reportService.GetReportDataAsync(model.StartDate, model.EndDate, model.SelectedWeigherId);
-
+                    var reportData = await _reportService.GetReportDataAsync(...);
                     if (reportData.Any())
                     {
-                        TempData["NotificationType"] = NotificationType.Success.ToString();
-                        TempData["NotificationMessage"] = "Отчет успешно сформирован!";
-                        // Сохраняем данные отчета тоже в TempData, чтобы они были доступны после редиректа
-                        TempData["ReportDataJson"] = System.Text.Json.JsonSerializer.Serialize(reportData);
+                        ViewData["ModalMessage"] = "Отчет успешно сформирован!";
+                        ViewData["ModalType"] = "Success";
+                        ViewData["ReportData"] = reportData;
                     }
                     else
                     {
-                        TempData["NotificationType"] = NotificationType.Warning.ToString();
-                        TempData["NotificationMessage"] = "По вашему запросу данные не найдены.";
+                        ViewData["ModalMessage"] = "Данные не найдены.";
+                        ViewData["ModalType"] = "Warning";
                     }
                 }
                 catch (Exception ex)
                 {
-                    TempData["NotificationType"] = NotificationType.Danger.ToString(); // Используем 'danger' для bootstrap
-                    TempData["NotificationMessage"] = $"Произошла ошибка: {ex.Message}";
+                    ViewData["ModalMessage"] = $"Произошла ошибка: {ex.Message}";
+                    ViewData["ModalType"] = "Error";
                 }
             }
 
-            // ВАЖНО: Делаем редирект на GET-метод Index
-            return RedirectToAction(nameof(Index));
+            // Просто возвращаем View. Никаких редиректов.
+            return View(model);
         }
 
         // unused
